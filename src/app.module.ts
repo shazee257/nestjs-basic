@@ -7,7 +7,7 @@ import { MongooseModelsModule } from './schemas/mongoose-model.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, cache: true }),
     DatabaseModule,
     MongooseModelsModule,
     UsersModule,
