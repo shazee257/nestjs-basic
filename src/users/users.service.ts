@@ -13,6 +13,7 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { comparePassword, hashPassword } from 'src/utils';
 import { loginDTO } from 'src/auth/dto/login.dto';
+import { Request } from 'express';
 
 @Injectable()
 export class UsersService {
@@ -43,8 +44,11 @@ export class UsersService {
     return this.userModel.create(createUserDto);
   }
 
-  async findAll() {
-    return await this.userModel.find();
+  async findAll(req: Request) {
+    // const page = Number(req.query.page) || 1;
+    // const limit = Number(req.query.limit) || 10;
+
+    return this.userModel.find();
   }
 
   async findOne(id) {
