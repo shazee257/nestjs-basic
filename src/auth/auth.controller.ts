@@ -10,11 +10,11 @@ export class AuthController {
 
   @Post('/login')
   @UseGuards(AuthGuard('local'))
-  login(@Req() req: Request): { user: User; token: string } {
+  login(@Req() req: Request): { user: User; accessToken: string } {
     const token = this.authService.generateToken(req['user']);
     return {
       user: req['user'],
-      token,
+      accessToken: token,
     };
   }
 }
