@@ -1,12 +1,8 @@
 import { Global, Module } from '@nestjs/common';
-import { USER_MODEL, UserSchema } from './user/user.schema';
-import { JOB_MODEL, JobSchema } from './job/job.schema';
 import { MongooseModule } from '@nestjs/mongoose';
+import { USER_MODEL, UserSchema } from './user/user.schema';
 
-const MODELS = [
-  { name: USER_MODEL, schema: UserSchema },
-  { name: JOB_MODEL, schema: JobSchema },
-];
+const MODELS = [{ name: USER_MODEL, schema: UserSchema }];
 
 @Global()
 @Module({

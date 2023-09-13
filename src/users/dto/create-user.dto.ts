@@ -1,21 +1,7 @@
-import { Type } from 'class-transformer';
-import {
-  IsString,
-  IsNotEmpty,
-  IsEmail,
-  IsOptional,
-  IsEnum,
-  IsNumber,
-  ValidateNested,
-} from 'class-validator';
-import { AddressDTO } from 'src/dto/address.dto';
-import { ACCOUNT_TYPE } from 'src/utils/constants';
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { ROLES } from 'src/utils/constants';
 
 export class CreateUserDTO {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
   @IsEmail()
   @IsNotEmpty()
   email: string;
@@ -24,27 +10,12 @@ export class CreateUserDTO {
   @IsNotEmpty()
   password: string;
 
-  @IsNumber()
-  @IsOptional()
-  age: number;
+  @IsEnum(ROLES)
+  @IsString()
+  @IsNotEmpty()
+  role: ROLES;
 
   @IsString()
   @IsNotEmpty()
-  phone: string;
-
-  @IsEnum(ACCOUNT_TYPE)
-  @IsNotEmpty()
-  accountType: ACCOUNT_TYPE;
-
-  @IsString({ each: true })
-  @IsOptional()
-  social: string[];
-
-  @Type(() => AddressDTO)
-  @ValidateNested()
-  @IsNotEmpty()
-  address: AddressDTO;
-
-  @IsOptional()
-  metadata: Record<string, any>;
+  deviceToken: string;
 }

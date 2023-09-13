@@ -1,15 +1,11 @@
-import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
-import { ACCOUNT_TYPE, ACCOUNT_STATUS } from 'src/utils/constants';
-import { Address, AddressSchema } from '../common/address.schema';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { ROLES } from 'src/utils/constants';
 
-@Schema({
-  timestamps: true,
-  versionKey: false,
-})
+@Schema({ timestamps: true, versionKey: false })
 export class User {
-  @Prop({ required: true })
-  name: string;
+  @Prop()
+  _id?: string;
 
   @Prop({ required: true })
   email: string;
@@ -17,43 +13,11 @@ export class User {
   @Prop({ required: true, select: false })
   password?: string;
 
-  @Prop()
-  age?: number;
+  @Prop({ type: String, enum: Object.values(ROLES), required: true })
+  role: ROLES;
 
-  @Prop()
-  phone?: string;
-
-  @Prop({
-    type: String,
-    enum: Object.keys(ACCOUNT_STATUS),
-    default: ACCOUNT_STATUS.ACTIVE,
-  })
-  status?: ACCOUNT_STATUS;
-
-  @Prop({
-    type: String,
-    enum: Object.keys(ACCOUNT_TYPE),
-    required: true,
-    immutable: true, // Immutable means it can not be changed in future once created
-  })
-  accountType: ACCOUNT_TYPE;
-
-  @Prop({ default: [] })
-  social?: string[];
-
-  @Prop({ default: false })
-  isEmailVerified?: boolean;
-
-  @Prop({ type: AddressSchema, required: true })
-  address: Address;
-
-  @Prop(
-    raw({
-      reference: { type: String },
-      beta: { type: Boolean },
-    }),
-  )
-  metadata: Record<string, any> | any;
+  @Prop({ required: true })
+  deviceToken: string;
 }
 
 export type UserDocument = User & Document;

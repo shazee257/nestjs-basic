@@ -1,17 +1,4 @@
-export enum ACCOUNT_TYPE {
-  STUDENT = 'STUDENT',
-  EMPLOYER = 'EMPLOYER',
-}
-
-export enum ACCOUNT_STATUS {
-  APPROVAL_PENDING = 'APPROVAL_PENDING',
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  BLOCKED = 'BLOCKED',
-  DELETED = 'DELETED',
-}
-
-export enum JOB_TYPE {
-  FULL_TIME = 'FULL_TIME',
-  PART_TIME = 'PART_TIME',
+export enum ROLES {
+  ADMIN = 'admin',
+  USER = 'user',
 }

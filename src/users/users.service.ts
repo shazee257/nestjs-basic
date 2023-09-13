@@ -1,14 +1,18 @@
 import {
-  BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
-  ServiceUnavailableException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { USER_MODEL, UserDocument } from 'src/schemas/user/user.schema';
-import { UpdateUserDTO } from './dto/update-user.dto';
 import { CreateUserDTO } from './dto/create-user.dto';
+import { UpdateUserDTO } from './dto/update-user.dto';
+import { comparePassword, hashPassword } from 'src/utils';
+import { loginDTO } from 'src/auth/dto/login.dto';
 
 @Injectable()
 export class UsersService {
@@ -17,16 +21,26 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDTO) {
-    try {
-      return await this.userModel.create(createUserDto);
-    } catch (error) {
-      console.log(error);
-      if (error.name === 'ValidationError') {
-        throw new BadRequestException(error.errors);
-      }
+    // find if user exists
+    const userExists = await this.userModel.findOne({
+      email: createUserDto.email,
+    });
 
-      throw new ServiceUnavailableException();
+    if (userExists) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.CONFLICT,
+          message: ['User already exists'],
+          error: 'User already exists',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
+
+    // hash password
+    createUserDto.password = hashPassword(createUserDto.password);
+
+    return this.userModel.create(createUserDto);
   }
 
   async findAll() {
@@ -69,5 +83,32 @@ export class UsersService {
     return {
       _id: id,
     };
+  }
+
+  async login(loginDto: loginDTO) {
+    try {
+      const user = await this.userModel.findOne(
+        { email: loginDto.email },
+        '+password',
+      );
+      if (!user) throw new NotFoundException();
+
+      const passwordMatch = comparePassword(loginDto.password, user.password);
+      if (!passwordMatch)
+        throw new UnauthorizedException({
+          statusCode: 401,
+          message: 'Password is incorrect',
+        });
+
+      const updatedUser = await this.userModel.findOneAndUpdate(
+        { email: loginDto.email },
+        { deviceToken: loginDto.deviceToken },
+        { new: true },
+      );
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating deviceToken:', error);
+      throw new InternalServerErrorException();
+    }
   }
 }
