@@ -1,7 +1,7 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { ROLES } from 'src/utils/constants';
 
-export class CreateUserDTO {
+export class RegisterUserDTO {
   @IsEmail()
   @IsNotEmpty()
   email: string;

@@ -8,7 +8,7 @@ export class AuthService {
 
   generateToken(payload: User): string {
     return this.jwtService.sign({
-      id: payload._id,
+      id: payload['_id'],
       email: payload.email,
       role: payload.role,
     });

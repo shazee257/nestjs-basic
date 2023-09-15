@@ -7,13 +7,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { USER_MODEL, UserDocument } from 'src/schemas/user/user.schema';
-import { CreateUserDTO } from './dto/create-user.dto';
-import { UpdateUserDTO } from './dto/update-user.dto';
-import { comparePassword, hashPassword } from 'src/utils';
-import { loginDTO } from 'src/auth/dto/login.dto';
 import { Request } from 'express';
+import { Model } from 'mongoose';
+import { loginDTO } from 'src/auth/dto/login.dto';
+import { USER_MODEL, UserDocument } from 'src/schemas/user/user.schema';
+import { comparePassword, hashPassword } from 'src/utils';
+import { UpdateUserDTO } from './dto/update-user.dto';
+import { RegisterUserDTO } from 'src/auth/dto/register.dto';
 
 @Injectable()
 export class UsersService {
@@ -21,10 +21,9 @@ export class UsersService {
     @InjectModel(USER_MODEL) private readonly userModel: Model<UserDocument>,
   ) {}
 
-  async create(createUserDto: CreateUserDTO) {
-    // find if user exists
+  async create(registerUserDto: RegisterUserDTO) {
     const userExists = await this.userModel.findOne({
-      email: createUserDto.email,
+      email: registerUserDto.email,
     });
 
     if (userExists) {
@@ -39,16 +38,20 @@ export class UsersService {
     }
 
     // hash password
-    createUserDto.password = hashPassword(createUserDto.password);
+    registerUserDto.password = hashPassword(registerUserDto.password);
 
-    return this.userModel.create(createUserDto);
+    const user = await this.userModel.create(registerUserDto);
+    return user;
   }
 
-  async findAll(req: Request) {
-    // const page = Number(req.query.page) || 1;
-    // const limit = Number(req.query.limit) || 10;
+  async findAll(query) {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
 
-    return this.userModel.find();
+    return this.userModel
+      .find()
+      .skip((page - 1) * limit)
+      .limit(limit);
   }
 
   async findOne(id) {

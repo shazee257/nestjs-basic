@@ -4,9 +4,6 @@ import { ROLES } from 'src/utils/constants';
 
 @Schema({ timestamps: true, versionKey: false })
 export class User {
-  @Prop()
-  _id?: string;
-
   @Prop({ required: true })
   email: string;
 
