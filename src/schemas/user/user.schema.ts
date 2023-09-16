@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { ROLES } from 'src/utils/constants';
-var mongoosePaginate = require('mongoose-aggregate-paginate-v2');
+const aggregateMongoosePaginate = require('mongoose-aggregate-paginate-v2');
 
 @Schema({ timestamps: true, versionKey: false })
 export class User {
@@ -23,4 +23,4 @@ export type UserDocument = User & Document;
 export const USER_MODEL = User.name;
 
 export const UserSchema = SchemaFactory.createForClass(User);
-UserSchema.plugin(mongoosePaginate);
+UserSchema.plugin(aggregateMongoosePaginate);

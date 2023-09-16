@@ -8,8 +8,7 @@ export const comparePassword = (password: string, hash: string): boolean => {
   return bcrypt.compareSync(password, hash);
 };
 
-export const getPaginatedResults = async () => {};
-
+// pagination with mongoose paginate library
 export const getAggregatedPaginatedResult = async ({
   model,
   page = 1,
@@ -40,5 +39,16 @@ export const getAggregatedPaginatedResult = async ({
     myAggregate,
     options,
   );
+
+  // delete password keys if present in result or nested objects
+  if (result) {
+    for (const key in result) {
+      if (result[key].password) {
+        delete result[key].password;
+        delete result[key].deviceToken;
+      }
+    }
+  }
+
   return { result, pagination };
 };

@@ -17,11 +17,14 @@ import {
 } from 'src/utils';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { RegisterUserDTO } from 'src/auth/dto/register.dto';
+import { fetchAllUsers } from './query/user.query';
+import { QueryOption } from 'src/interfaces/queryOption.interface';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(USER_MODEL) private readonly userModel: Model<UserDocument>,
+    @InjectModel(USER_MODEL)
+    private readonly userModel: Model<UserDocument>,
   ) {}
 
   async create(registerUserDto: RegisterUserDTO) {
@@ -47,48 +50,23 @@ export class UsersService {
     return user;
   }
 
-  async findAll(query, userId) {
-    const page = Number(query.page) || 1;
-    const limit = Number(query.limit) || 10;
-    const keyword = query.keyword || '';
+  async findAll(query: QueryOption, userId: string) {
+    const page = query.page || 1;
+    const limit = query.limit || 10;
+    const keyword = query.search || '';
 
     const { result, pagination } = await getAggregatedPaginatedResult({
       model: this.userModel,
-      query: [], //fetchAllUsers(user.id, q),
+      query: fetchAllUsers(userId, keyword),
       page,
       limit,
     });
 
     return { result, pagination };
-
-    // Build your query excluding userId
-    // const dbQuery = {
-    //   $and: [
-    //     { _id: { $ne: new Types.ObjectId(userId) } },
-    //     { role: { $ne: 'admin' } },
-    //     // {
-    //     // $or: [
-    //     //   { fullName: { $regex: keyword, $options: 'i' } },
-    //     { email: { $regex: keyword, $options: 'i' } },
-    //     // ],
-    //     // },
-    //   ],
-    // };
-
-    // // Use the countDocuments method to get the total count of documents
-    // const totalCount = await this.userModel.countDocuments(dbQuery);
-
-    // // Find the documents based on your query
-    // const results: User[] = await this.userModel
-    //   .find(dbQuery)
-    //   .skip((page - 1) * limit)
-    //   .limit(limit);
-
-    // return { totalCount, results };
   }
 
-  async findOne(id) {
-    const user = await this.userModel.findById(id);
+  async findOne(userId: string) {
+    const user = await this.userModel.findById(userId);
 
     if (!user) {
       throw new NotFoundException('User not found');

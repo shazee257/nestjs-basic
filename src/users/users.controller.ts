@@ -10,26 +10,29 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from 'src/schemas/user/user.schema';
+import { Request } from 'express';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { UsersService } from './users.service';
-import { Request } from 'express';
+import { QueryOption } from 'src/interfaces/queryOption.interface';
+import { User } from 'src/schemas/user/user.schema';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get()
+  @Get('/search')
   @UseGuards(AuthGuard('jwt'))
-  findAll(@Req() req: Request, @Query() query): Promise<any> {
-    const userId: string = req['user'];
-
+  findAll(@Req() req: Request, @Query() query: QueryOption): Promise<any> {
+    const userId: string = req['user'].id;
+    console.log(userId);
     return this.usersService.findAll(query, userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  @Get()
+  @UseGuards(AuthGuard('jwt'))
+  findOne(@Req() req: Request, @Query('userId') id: string): Promise<User> {
+    const userId = id ? id : req['user'].id;
+    return this.usersService.findOne(userId);
   }
 
   @Put(':id')
