@@ -1,31 +1,20 @@
-import { Type } from 'class-transformer';
-import {
-  IsNumber,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
-import { AddressDTO } from 'src/dto/address.dto';
+import { IsOptional, IsString, Validate } from 'class-validator';
+import { IsDateValidConstraint } from 'src/common/validators';
+// import { AddressDTO } from 'src/dto/address.dto';
 
 export class UpdateUserDTO {
   @IsString()
   @IsOptional()
-  name: string;
-
-  @IsNumber()
-  @IsOptional()
-  age: number;
+  firstName: string;
 
   @IsString()
   @IsOptional()
-  phone: string;
+  lastName: string;
 
-  @IsString({ each: true })
   @IsOptional()
-  social: string[];
-
-  @Type(() => AddressDTO)
-  @ValidateNested()
-  @IsOptional()
-  address: AddressDTO;
+  @Validate(IsDateValidConstraint, {
+    message:
+      'Invalid date format. Please provide a valid date in "yyyy-mm-dd" format.',
+  })
+  dob: string;
 }

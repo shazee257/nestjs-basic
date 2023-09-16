@@ -13,7 +13,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { UsersService } from './users.service';
-import { QueryOption } from 'src/interfaces/queryOption.interface';
+import { QueryOption } from 'src/common/interfaces';
 import { User } from 'src/schemas/user/user.schema';
 
 @Controller('users')
@@ -35,9 +35,12 @@ export class UsersController {
     return this.usersService.findOne(userId);
   }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDTO) {
-    return this.usersService.update(id, updateUserDto);
+  @Put('/update-profile')
+  @UseGuards(AuthGuard('jwt'))
+  update(@Req() req: Request, @Body() updateUserDto: UpdateUserDTO) {
+    const userId = req['user'].id;
+    console.log(userId);
+    return this.usersService.update(userId, updateUserDto);
   }
 
   @Delete(':id')

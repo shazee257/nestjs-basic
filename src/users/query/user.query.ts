@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { ROLES } from 'src/utils/constants';
+import { ROLES } from 'src/common/constants';
 
 export const fetchAllUsers = (userId: string, search: string) => {
   return [

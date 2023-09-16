@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -14,11 +15,11 @@ import {
   comparePassword,
   getAggregatedPaginatedResult,
   hashPassword,
-} from 'src/utils';
+} from 'src/common/helpers';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { RegisterUserDTO } from 'src/auth/dto/register.dto';
 import { fetchAllUsers } from './query/user.query';
-import { QueryOption } from 'src/interfaces/queryOption.interface';
+import { QueryOption } from 'src/common/interfaces';
 
 @Injectable()
 export class UsersService {
@@ -75,13 +76,11 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDTO) {
+  async update(userId: string, updateUserDto: UpdateUserDTO) {
     const updatedUser = await this.userModel.findByIdAndUpdate(
-      id,
+      userId,
       updateUserDto,
-      {
-        new: true,
-      },
+      { new: true },
     );
 
     if (!updatedUser) {

@@ -1,10 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { ROLES } from 'src/utils/constants';
+import { ROLES } from 'src/common/constants';
+
 const aggregateMongoosePaginate = require('mongoose-aggregate-paginate-v2');
 
 @Schema({ timestamps: true, versionKey: false })
 export class User {
+  @Prop()
+  firstName: string;
+
+  @Prop()
+  lastName: string;
+
+  @Prop()
+  dob: Date;
+
   @Prop({ required: true })
   email: string;
 
