@@ -6,12 +6,14 @@ import {
   Param,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/schemas/user/user.schema';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -19,8 +21,10 @@ export class UsersController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
-  findAll(@Query() query): Promise<User[]> {
-    return this.usersService.findAll(query);
+  findAll(@Req() req: Request, @Query() query): Promise<any> {
+    const userId: string = req['user'];
+
+    return this.usersService.findAll(query, userId);
   }
 
   @Get(':id')

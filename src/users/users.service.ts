@@ -7,11 +7,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Request } from 'express';
 import { Model } from 'mongoose';
 import { loginDTO } from 'src/auth/dto/login.dto';
 import { USER_MODEL, UserDocument } from 'src/schemas/user/user.schema';
-import { comparePassword, hashPassword } from 'src/utils';
+import {
+  comparePassword,
+  getAggregatedPaginatedResult,
+  hashPassword,
+} from 'src/utils';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { RegisterUserDTO } from 'src/auth/dto/register.dto';
 
@@ -44,14 +47,44 @@ export class UsersService {
     return user;
   }
 
-  async findAll(query) {
+  async findAll(query, userId) {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
+    const keyword = query.keyword || '';
 
-    return this.userModel
-      .find()
-      .skip((page - 1) * limit)
-      .limit(limit);
+    const { result, pagination } = await getAggregatedPaginatedResult({
+      model: this.userModel,
+      query: [], //fetchAllUsers(user.id, q),
+      page,
+      limit,
+    });
+
+    return { result, pagination };
+
+    // Build your query excluding userId
+    // const dbQuery = {
+    //   $and: [
+    //     { _id: { $ne: new Types.ObjectId(userId) } },
+    //     { role: { $ne: 'admin' } },
+    //     // {
+    //     // $or: [
+    //     //   { fullName: { $regex: keyword, $options: 'i' } },
+    //     { email: { $regex: keyword, $options: 'i' } },
+    //     // ],
+    //     // },
+    //   ],
+    // };
+
+    // // Use the countDocuments method to get the total count of documents
+    // const totalCount = await this.userModel.countDocuments(dbQuery);
+
+    // // Find the documents based on your query
+    // const results: User[] = await this.userModel
+    //   .find(dbQuery)
+    //   .skip((page - 1) * limit)
+    //   .limit(limit);
+
+    // return { totalCount, results };
   }
 
   async findOne(id) {

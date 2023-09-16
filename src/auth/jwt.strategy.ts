@@ -7,7 +7,7 @@ import { User } from 'src/schemas/user/user.schema';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromHeader('accessToken'.toLowerCase()),
+      jwtFromRequest: ExtractJwt.fromHeader('accesstoken'),
       ignoreExpiration: false,
       secretOrKey: 'secret',
     });

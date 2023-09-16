@@ -20,7 +20,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     }
     try {
       const user = await this.usersService.login({
-        email: 'abc',
+        email,
         password,
         deviceToken,
       });
