@@ -18,7 +18,15 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-
-    return this.usersService.login({ email, password, deviceToken });
+    try {
+      const user = await this.usersService.login({
+        email: 'abc',
+        password,
+        deviceToken,
+      });
+      return user;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
   }
 }

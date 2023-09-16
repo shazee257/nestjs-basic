@@ -93,29 +93,24 @@ export class UsersService {
   }
 
   async login(loginDto: loginDTO) {
-    try {
-      const user = await this.userModel.findOne(
-        { email: loginDto.email },
-        '+password',
-      );
-      if (!user) throw new NotFoundException();
+    const user = await this.userModel.findOne(
+      { email: loginDto.email },
+      '+password',
+    );
+    if (!user) throw new NotFoundException('User not found');
 
-      const passwordMatch = comparePassword(loginDto.password, user.password);
-      if (!passwordMatch)
-        throw new UnauthorizedException({
-          statusCode: 401,
-          message: 'Password is incorrect',
-        });
+    const passwordMatch = comparePassword(loginDto.password, user.password);
+    if (!passwordMatch)
+      throw new UnauthorizedException({
+        statusCode: 401,
+        message: 'Password is incorrect',
+      });
 
-      const updatedUser = await this.userModel.findOneAndUpdate(
-        { email: loginDto.email },
-        { deviceToken: loginDto.deviceToken },
-        { new: true },
-      );
-      return updatedUser;
-    } catch (error) {
-      console.error('Error updating deviceToken:', error);
-      throw new InternalServerErrorException();
-    }
+    const updatedUser = await this.userModel.findOneAndUpdate(
+      { email: loginDto.email },
+      { deviceToken: loginDto.deviceToken },
+      { new: true },
+    );
+    return updatedUser;
   }
 }
