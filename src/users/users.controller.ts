@@ -13,7 +13,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { UsersService } from './users.service';
-import { QueryOption } from 'src/common/interfaces';
+import { PaginationResult, QueryOption } from 'src/common/interfaces';
 import { User } from 'src/schemas/user/user.schema';
 
 @Controller('users')
@@ -23,8 +23,8 @@ export class UsersController {
   @Get('/search')
   @UseGuards(AuthGuard('jwt'))
   findAll(@Req() req: Request, @Query() query: QueryOption): Promise<any> {
+    // ): Promise<PaginationResult<User>> {
     const userId: string = req['user'].id;
-    console.log(userId);
     return this.usersService.findAll(query, userId);
   }
 

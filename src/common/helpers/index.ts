@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt';
+import { PaginationResult } from '../interfaces';
 
 export const hashPassword = (password: string): string => {
   return bcrypt.hashSync(password, 10);
@@ -9,7 +10,7 @@ export const comparePassword = (password: string, hash: string): boolean => {
 };
 
 // pagination with mongoose paginate library
-export const getAggregatedPaginatedResult = async ({
+export const getAggregatedPaginatedResult = async <T>({
   model,
   page = 1,
   limit = 10,
@@ -17,7 +18,15 @@ export const getAggregatedPaginatedResult = async ({
   populate = '',
   select = '-password',
   sort = { createdAt: -1 },
-}: any): Promise<any> => {
+}: {
+  model: any;
+  page?: number;
+  limit?: number;
+  query?: any[]; // Adjust the type as needed
+  populate?: string;
+  select?: string;
+  sort?: Record<string, number>;
+}): Promise<PaginationResult<T>> => {
   const options = {
     select,
     sort,
