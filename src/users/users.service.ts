@@ -10,7 +10,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { loginDTO } from 'src/auth/dto/login.dto';
-import { USER_MODEL, UserDocument } from 'src/schemas/user/user.schema';
+import { USER_MODEL, User, UserDocument } from 'src/schemas/user/user.schema';
 import {
   comparePassword,
   getAggregatedPaginatedResult,
@@ -19,7 +19,7 @@ import {
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { RegisterUserDTO } from 'src/auth/dto/register.dto';
 import { fetchAllUsers } from './query/user.query';
-import { QueryOption } from 'src/common/interfaces';
+import { PaginationResult, QueryOption } from 'src/common/interfaces';
 
 @Injectable()
 export class UsersService {
@@ -56,12 +56,13 @@ export class UsersService {
     const limit = query.limit || 10;
     const keyword = query.search || '';
 
-    const { result, pagination } = await getAggregatedPaginatedResult({
-      model: this.userModel,
-      query: fetchAllUsers(userId, keyword),
-      page,
-      limit,
-    });
+    const { result, pagination }: PaginationResult<User> =
+      await getAggregatedPaginatedResult({
+        model: this.userModel,
+        query: fetchAllUsers(userId, keyword),
+        page,
+        limit,
+      });
 
     return { result, pagination };
   }
@@ -122,5 +123,13 @@ export class UsersService {
       { new: true },
     );
     return updatedUser;
+  }
+
+  async uploadImage(userId: string, fileName: string) {
+    return await this.userModel.findByIdAndUpdate(
+      userId,
+      { image: `users/${fileName}` },
+      { new: true },
+    );
   }
 }

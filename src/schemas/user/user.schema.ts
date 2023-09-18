@@ -19,7 +19,10 @@ export class User {
   email: string;
 
   @Prop({ required: true, select: false })
-  password?: string;
+  password: string;
+
+  @Prop()
+  image: string;
 
   @Prop({ type: String, enum: Object.values(ROLES), required: true })
   role: ROLES;

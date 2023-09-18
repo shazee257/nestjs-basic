@@ -61,3 +61,21 @@ export const getAggregatedPaginatedResult = async <T>({
 
   return { result, pagination };
 };
+
+export const generateFilename = (req, file, cb) => {
+  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+  cb(null, uniqueSuffix + '.' + file.originalname.split('.').pop());
+};
+
+export const filterImage = (req, file, cb) => {
+  // check mime type
+  if (
+    !file.mimetype.match(
+      /image\/(jpg|JPG|webp|jpeg|JPEG|png|PNG|gif|GIF|jfif|JFIF)/,
+    )
+  ) {
+    req.fileValidationError = 'Only image files are allowed!';
+    return cb(null, false);
+  }
+  cb(null, true);
+};

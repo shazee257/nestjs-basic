@@ -3,11 +3,15 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Put,
   Query,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
@@ -15,6 +19,9 @@ import { UpdateUserDTO } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 import { PaginationResult, QueryOption } from 'src/common/interfaces';
 import { User } from 'src/schemas/user/user.schema';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { filterImage, generateFilename } from 'src/common/helpers';
 
 @Controller('users')
 export class UsersController {
@@ -22,8 +29,10 @@ export class UsersController {
 
   @Get('/search')
   @UseGuards(AuthGuard('jwt'))
-  findAll(@Req() req: Request, @Query() query: QueryOption): Promise<any> {
-    // ): Promise<PaginationResult<User>> {
+  findAll(
+    @Req() req: Request,
+    @Query() query: QueryOption,
+  ): Promise<PaginationResult<User>> {
     const userId: string = req['user'].id;
     return this.usersService.findAll(query, userId);
   }
@@ -46,5 +55,30 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
+  }
+
+  @Put('/upload-image')
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads/users/',
+        filename: generateFilename,
+      }),
+      fileFilter: filterImage,
+    }),
+  )
+  uploadImage(@Req() req, @UploadedFile() file) {
+    console.log('file >>>>>>>>>>>>>> ', req.fileValidationError);
+
+    // error handling
+    if (req.fileValidationError) {
+      throw new HttpException(
+        req.fileValidationError,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    return this.usersService.uploadImage(req.user.id, file.filename);
   }
 }
