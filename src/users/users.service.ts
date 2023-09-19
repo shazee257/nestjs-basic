@@ -26,12 +26,10 @@ export class UsersService {
   constructor(
     @InjectModel(USER_MODEL)
     private readonly userModel: Model<UserDocument>,
-  ) {}
+  ) { }
 
   async create(registerUserDto: RegisterUserDTO) {
-    const userExists = await this.userModel.findOne({
-      email: registerUserDto.email,
-    });
+    const userExists = await this.userModel.findOne({ email: registerUserDto.email });
 
     if (userExists) {
       throw new HttpException(
@@ -78,11 +76,7 @@ export class UsersService {
   }
 
   async update(userId: string, updateUserDto: UpdateUserDTO) {
-    const updatedUser = await this.userModel.findByIdAndUpdate(
-      userId,
-      updateUserDto,
-      { new: true },
-    );
+    const updatedUser = await this.userModel.findByIdAndUpdate(userId, updateUserDto, { new: true });
 
     if (!updatedUser) {
       throw new NotFoundException('User not found');

@@ -25,7 +25,7 @@ import { filterImage, generateFilename } from 'src/common/helpers';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Get('/search')
   @UseGuards(AuthGuard('jwt'))
@@ -48,7 +48,6 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   update(@Req() req: Request, @Body() updateUserDto: UpdateUserDTO) {
     const userId = req['user'].id;
-    console.log(userId);
     return this.usersService.update(userId, updateUserDto);
   }
 

@@ -13,10 +13,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   async validate(req: Request, email: string, password: string) {
     const { deviceToken } = req.body;
     if (!deviceToken) {
-      throw new HttpException(
-        'deviceToken is required',
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      throw new HttpException('deviceToken is required', HttpStatus.UNPROCESSABLE_ENTITY);
     }
     try {
       const user = await this.usersService.login({
