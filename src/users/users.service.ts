@@ -2,24 +2,22 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
-  ServiceUnavailableException,
-  UnauthorizedException,
+  UnauthorizedException
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { loginDTO } from 'src/auth/dto/login.dto';
-import { USER_MODEL, User, UserDocument } from 'src/schemas/user/user.schema';
+import { RegisterUserDTO } from 'src/auth/dto/register.dto';
 import {
   comparePassword,
   getAggregatedPaginatedResult,
-  hashPassword,
+  hashPassword
 } from 'src/common/helpers';
-import { UpdateUserDTO } from './dto/update-user.dto';
-import { RegisterUserDTO } from 'src/auth/dto/register.dto';
-import { fetchAllUsers } from './query/user.query';
 import { PaginationResult, QueryOption } from 'src/common/interfaces';
+import { USER_MODEL, User, UserDocument } from 'src/schemas/user/user.schema';
+import { UpdateUserDTO } from './dto/update-user.dto';
+import { fetchAllUsers } from './query/user.query';
 
 @Injectable()
 export class UsersService {
@@ -61,6 +59,13 @@ export class UsersService {
         page,
         limit,
       });
+
+    // const { result, pagination }: PaginationResult<User> = await getPaginatedResult({
+    //   model: this.userModel,
+    //   query: {},
+    //   page,
+    //   limit,
+    // })
 
     return { result, pagination };
   }

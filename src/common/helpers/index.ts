@@ -62,6 +62,41 @@ export const getAggregatedPaginatedResult = async <T>({
   return { result, pagination };
 };
 
+export const getPaginatedResult = async <T>({
+  model, page = 1, limit = 10, query = {}, sort = { createdAt: -1 }, populate = '' }: {
+    model: any;
+    page?: number;
+    limit?: number;
+    query?: any;
+    sort?: any;
+    populate?: any;
+  }): Promise<PaginationResult<T>> => {
+  const count = await model.countDocuments(query);
+  const totalPages = Math.ceil(count / limit);
+  const hasNextPage = page < totalPages;
+  const hasPrevPage = page > 1;
+
+  const result = await model
+    .find(query)
+    .sort(sort)
+    .skip((page - 1) * limit)
+    .limit(limit)
+    .populate(populate);
+
+  const pagination = {
+    totalItems: count,
+    perPage: limit,
+    currentPage: page,
+    totalPages,
+    hasNextPage,
+    hasPrevPage,
+    nextPage: hasNextPage ? page + 1 : null,
+    prevPage: hasPrevPage ? page - 1 : null,
+  };
+
+  return { result, pagination };
+}
+
 export const generateFilename = (req, file, cb) => {
   const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
   cb(null, uniqueSuffix + '.' + file.originalname.split('.').pop());
