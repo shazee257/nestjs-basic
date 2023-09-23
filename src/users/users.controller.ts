@@ -13,7 +13,6 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
-  UsePipes,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
@@ -33,12 +32,13 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   findAll(
     @Req() req: Request,
-    @Query('page', new ParseIntPipe()) page: number,
-    @Query('limit', new ParseIntPipe()) limit: number,
+    @Query('page', new ParseIntPipe()) page: number = 1,
+    @Query('limit', new ParseIntPipe()) limit: number = 10,
+    @Query('search') keyword: string = '',
   ): Promise<PaginationResult<User>> {
     const userId: string = req['user'].id;
-    const query: QueryOption = { page, limit };
-    return this.usersService.findAll(query, userId);
+    const options: QueryOption = { page, limit, keyword, userId };
+    return this.usersService.findAll(options);
   }
 
   @Get()

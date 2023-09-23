@@ -47,11 +47,7 @@ export class UsersService {
     return user;
   }
 
-  async findAll(query: QueryOption, userId: string) {
-    const page = query.page || 1;
-    const limit = query.limit || 10;
-    const keyword = query.search || '';
-
+  async findAll({ page, limit, keyword, userId }: QueryOption) {
     const { result, pagination }: PaginationResult<User> =
       await getAggregatedPaginatedResult({
         model: this.userModel,

@@ -1,7 +1,12 @@
 export interface QueryOption {
-  page?: number;
-  limit?: number;
-  search?: string;
+  page: number;
+  limit: number;
+  keyword?: string;
+  userId?: string;
+  sort?: Record<string, number>;
+  populate?: string;
+  select?: string;
+  query?: any
 }
 
 export interface PaginationResult<T> {
