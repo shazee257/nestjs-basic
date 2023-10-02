@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
 import { ApiResponse, PaginationResult } from '../interfaces';
-import { HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export const hashPassword = (password: string): string => {
   return bcrypt.hashSync(password, 10);
@@ -128,4 +128,22 @@ export const generateResponse = <T>(
   };
 
   return res.status(statusCode).json(response);
+};
+
+
+// return res.status(HttpStatus.BAD_REQUEST).json({
+//   statusCode: error.status,
+//   message: [error.message],
+//   error: error.name,
+// });
+
+
+export const throwError = (error: any) => {
+  throw new HttpException({
+    statusCode: error.status,
+    message: [error.message],
+    error: error.name,
+  },
+    error.status,
+  );
 };

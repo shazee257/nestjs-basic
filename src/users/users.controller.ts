@@ -1,5 +1,6 @@
 import {
-  Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseIntPipe, Put, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors,
+  BadRequestException,
+  Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseIntPipe, Put, Query, Req, Res, UnprocessableEntityException, UploadedFile, UseGuards, UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
@@ -9,7 +10,7 @@ import { PaginationResult, QueryOption } from 'src/common/interfaces';
 import { User } from 'src/schemas/user/user.schema';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { filterImage, generateFilename, generateResponse } from 'src/common/helpers';
+import { filterImage, generateFilename, generateResponse, throwError } from 'src/common/helpers';
 import { GetCurrentUserId } from 'src/common/decorators';
 
 @Controller('users')
@@ -25,8 +26,14 @@ export class UsersController {
     @Query('limit', new ParseIntPipe()) limit: number = 10,
     @Query('search') keyword: string = '') {
     const options: QueryOption = { page, limit, keyword, userId };
-    const users = await this.usersService.findAll(options);
-    generateResponse(users, 'Fetched profile successfully', res);
+
+    try {
+      const users = await this.usersService.findAll(options);
+      generateResponse(users, 'Fetched profile successfully', res);
+    } catch (error) {
+      throwError(error);
+    }
+
   }
 
   @Get()

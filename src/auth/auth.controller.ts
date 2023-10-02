@@ -30,6 +30,7 @@ export class AuthController {
 
   @Post('/register')
   async register(@Res() res: Response, @Body() registerUserDto: RegisterUserDTO) {
+
     const user: User = await this.usersService.create(registerUserDto);
     const accessToken = this.authService.generateToken(user);
     generateResponse({ user, accessToken }, 'Registered successfully', res);
