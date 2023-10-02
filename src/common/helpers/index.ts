@@ -15,7 +15,6 @@ export const getAggregatedPaginatedResult = async <T>({
   page = 1,
   limit = 10,
   query = [],
-  populate = '',
   select = '-password',
   sort = { createdAt: -1 },
 }: {
@@ -23,14 +22,12 @@ export const getAggregatedPaginatedResult = async <T>({
   page?: number;
   limit?: number;
   query?: any[]; // Adjust the type as needed
-  populate?: string;
   select?: string;
   sort?: Record<string, number>;
 }): Promise<PaginationResult<T>> => {
   const options = {
     select,
     sort,
-    populate,
     lean: true,
     page,
     limit,
@@ -59,6 +56,7 @@ export const getAggregatedPaginatedResult = async <T>({
     }
   }
 
+  if (pagination) delete pagination.pagingCounter;
   return { result, pagination };
 };
 

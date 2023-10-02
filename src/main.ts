@@ -1,13 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-// import { ValidationExceptionFilter } from './validation-exception.filter';
+import { ValidationExceptionFilter } from './validation-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Register the global exception filter
-  // app.useGlobalFilters(new ValidationExceptionFilter());
+  app.useGlobalFilters(new ValidationExceptionFilter());
 
   app.setGlobalPrefix('api');
 

@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   HttpCode,
+  HttpException,
+  HttpStatus,
   Post,
   UseGuards
 } from '@nestjs/common';
@@ -32,6 +34,9 @@ export class AuthController {
 
   @Post('/register')
   async register(@Body() registerUserDto: RegisterUserDTO): Promise<UserWithAccessToken> {
+
+    throw new HttpException('Not implemented', HttpStatus.NOT_IMPLEMENTED);
+
     const user: User = await this.usersService.create(registerUserDto);
     const accessToken = this.authService.generateToken(user);
 

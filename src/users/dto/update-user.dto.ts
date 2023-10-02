@@ -6,7 +6,6 @@ import {
   Validate
 } from 'class-validator';
 import { IsDateValidConstraint } from 'src/common/validators';
-// import { AddressDTO } from 'src/dto/address.dto';
 
 export class UpdateUserDTO {
   @IsString({ message: 'First name is not valid.' })

@@ -21,7 +21,6 @@ export interface Pagination {
   perPage: number;
   currentPage: number;
   totalPages: number;
-  pagingCounter?: number;
   hasPrevPage?: boolean;
   hasNextPage?: boolean;
   prevPage?: number;
@@ -34,7 +33,7 @@ export interface JwtPayload {
   role: string;
 }
 
-export class UserWithAccessToken {
+export interface UserWithAccessToken {
   user: User;
   accessToken: string;
 }

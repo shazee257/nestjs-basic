@@ -8,12 +8,7 @@ export const fetchAllUsers = (userId: string, search: string) => {
         $and: [
           { _id: { $ne: new Types.ObjectId(userId) } },
           { role: { $ne: ROLES.ADMIN } },
-          // {
-          //   $or: [
-          // { fullName: { $regex: search, $options: 'i' } },
           { email: { $regex: search, $options: 'i' } },
-          //     ],
-          //   },
         ],
       },
     },
