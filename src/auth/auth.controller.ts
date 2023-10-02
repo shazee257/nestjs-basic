@@ -1,19 +1,18 @@
 import {
   Body,
   Controller,
-  HttpCode,
-  HttpException,
-  HttpStatus,
   Post,
+  Res,
   UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { UserWithAccessToken } from 'src/common/interfaces';
+import { Response } from 'express';
+import { GetCurrentUser } from 'src/common/decorators';
+import { generateResponse } from 'src/common/helpers';
 import { User } from 'src/schemas/user/user.schema';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { RegisterUserDTO } from './dto/register.dto';
-import { GetCurrentUser } from 'src/common/decorators/indext';
 
 @Controller('auth')
 export class AuthController {
@@ -22,27 +21,17 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) { }
 
-  @HttpCode(200)
   @Post('/login')
   @UseGuards(AuthGuard('local'))
-  login(@GetCurrentUser() user: User)
-    : UserWithAccessToken {
+  login(@Res() res: Response, @GetCurrentUser() user: User) {
     const accessToken = this.authService.generateToken(user);
-
-    return { user, accessToken };
+    generateResponse({ user, accessToken }, 'Logged in successfully', res);
   }
 
   @Post('/register')
-  async register(@Body() registerUserDto: RegisterUserDTO): Promise<UserWithAccessToken> {
-
-    throw new HttpException('Not implemented', HttpStatus.NOT_IMPLEMENTED);
-
+  async register(@Res() res: Response, @Body() registerUserDto: RegisterUserDTO) {
     const user: User = await this.usersService.create(registerUserDto);
     const accessToken = this.authService.generateToken(user);
-
-    return {
-      user,
-      accessToken,
-    };
+    generateResponse({ user, accessToken }, 'Registered successfully', res);
   }
 }

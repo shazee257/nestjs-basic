@@ -77,7 +77,7 @@ export class UsersService {
   }
 
   async update(userId: string, updateUserDto: UpdateUserDTO) {
-    const updatedUser = await this.userModel.findByIdAndUpdate(userId, updateUserDto, { new: true });
+    const updatedUser = await this.userModel.findByIdAndUpdate(userId, { $set: updateUserDto }, { new: true });
 
     if (!updatedUser) {
       throw new NotFoundException('User not found');
@@ -86,16 +86,14 @@ export class UsersService {
     return updatedUser;
   }
 
-  async remove(id) {
-    const deletedUser = await this.userModel.findByIdAndDelete(id);
+  async remove(userId: string) {
+    const deletedUser = await this.userModel.findByIdAndDelete(userId);
 
     if (!deletedUser) {
       throw new NotFoundException('User not found');
     }
 
-    return {
-      _id: id,
-    };
+    return deletedUser;
   }
 
   async login(loginDto: loginDTO) {
@@ -121,10 +119,6 @@ export class UsersService {
   }
 
   async uploadImage(userId: string, fileName: string) {
-    return await this.userModel.findByIdAndUpdate(
-      userId,
-      { image: `users/${fileName}` },
-      { new: true },
-    );
+    return await this.userModel.findByIdAndUpdate(userId, { $set: { image: `users/${fileName}` } }, { new: true });
   }
 }

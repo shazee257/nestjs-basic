@@ -1,5 +1,7 @@
 import * as bcrypt from 'bcrypt';
-import { PaginationResult } from '../interfaces';
+import { Response } from 'express';
+import { ApiResponse, PaginationResult } from '../interfaces';
+import { HttpStatus } from '@nestjs/common';
 
 export const hashPassword = (password: string): string => {
   return bcrypt.hashSync(password, 10);
@@ -111,4 +113,19 @@ export const filterImage = (req, file, cb) => {
     return cb(null, false);
   }
   cb(null, true);
+};
+
+export const generateResponse = <T>(
+  data: T,
+  message: string,
+  res: Response,
+  statusCode: number = 200
+): void => {
+  const response: ApiResponse<T> = {
+    data,
+    message,
+    statusCode,
+  };
+
+  return res.status(statusCode).json(response);
 };

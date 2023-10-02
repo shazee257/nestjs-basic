@@ -1,28 +1,16 @@
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpException,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
-  Put,
-  Query,
-  Req,
-  UploadedFile,
-  UseGuards,
-  UseInterceptors,
+  Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseIntPipe, Put, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
+import { Response } from 'express';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 import { PaginationResult, QueryOption } from 'src/common/interfaces';
 import { User } from 'src/schemas/user/user.schema';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { filterImage, generateFilename } from 'src/common/helpers';
+import { filterImage, generateFilename, generateResponse } from 'src/common/helpers';
+import { GetCurrentUserId } from 'src/common/decorators';
 
 @Controller('users')
 export class UsersController {
@@ -30,34 +18,36 @@ export class UsersController {
 
   @Get('/search')
   @UseGuards(AuthGuard('jwt'))
-  findAll(
-    @Req() req: Request,
+  async findAll(
+    @GetCurrentUserId() userId: string,
+    @Res() res: Response,
     @Query('page', new ParseIntPipe()) page: number = 1,
     @Query('limit', new ParseIntPipe()) limit: number = 10,
-    @Query('search') keyword: string = '',
-  ): Promise<PaginationResult<User>> {
-    const userId: string = req['user'].id;
+    @Query('search') keyword: string = '') {
     const options: QueryOption = { page, limit, keyword, userId };
-    return this.usersService.findAll(options);
+    const users = await this.usersService.findAll(options);
+    generateResponse(users, 'Fetched profile successfully', res);
   }
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
-  findOne(@Req() req: Request, @Query('userId') id: string): Promise<User> {
-    const userId = id ? id : req['user'].id;
-    return this.usersService.findOne(userId);
+  async findOne(@Res() res: Response, @GetCurrentUserId() userId: string) {
+    const user = await this.usersService.findOne(userId);
+    generateResponse(user, 'Fetched profile successfully', res);
+
+
   }
 
   @Put('/update-profile')
   @UseGuards(AuthGuard('jwt'))
-  update(@Req() req: Request, @Body() updateUserDto: UpdateUserDTO) {
-    const userId = req['user'].id;
+  update(@GetCurrentUserId() userId: string, @Body() updateUserDto: UpdateUserDTO) {
     return this.usersService.update(userId, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  @Delete('/remove-account')
+  @UseGuards(AuthGuard('jwt'))
+  remove(@GetCurrentUserId() userId: string) {
+    return this.usersService.remove(userId);
   }
 
   @Put('/upload-image')
@@ -71,17 +61,17 @@ export class UsersController {
       fileFilter: filterImage,
     }),
   )
-  uploadImage(@Req() req, @UploadedFile() file) {
-    console.log('file >>>>>>>>>>>>>> ', req.fileValidationError);
+  uploadImage(@GetCurrentUserId() userId: string, @Req() req: Request, @UploadedFile() file) {
+    console.log('req.fileValidationError >>>>>>>>>>>>>> ', req['fileValidationError']);
 
     // error handling
-    if (req.fileValidationError) {
+    if (req['fileValidationError']) {
       throw new HttpException(
-        req.fileValidationError,
+        req['fileValidationError'],
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
 
-    return this.usersService.uploadImage(req.user.id, file.filename);
+    return this.usersService.uploadImage(userId, file.filename);
   }
 }

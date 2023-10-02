@@ -28,12 +28,13 @@ export interface Pagination {
 }
 
 export interface JwtPayload {
-  _id: string;
+  id: string;
   email: string;
   role: string;
 }
 
-export interface UserWithAccessToken {
-  user: User;
-  accessToken: string;
+export interface ApiResponse<T> {
+  data: T;
+  message: string;
+  statusCode: number;
 }

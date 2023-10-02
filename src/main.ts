@@ -9,9 +9,13 @@ async function bootstrap() {
   // Register the global exception filter
   app.useGlobalFilters(new ValidationExceptionFilter());
 
+  // Register the global prefix
   app.setGlobalPrefix('api');
 
+  // Register the global validation pipe
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+
   await app.listen(3000);
 }
+
 bootstrap();
