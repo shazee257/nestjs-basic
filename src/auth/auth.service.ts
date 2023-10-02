@@ -4,13 +4,13 @@ import { User } from 'src/schemas/user/user.schema';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(private readonly jwtService: JwtService) { }
 
-  generateToken(payload: User): string {
+  generateToken(user: User, userId: string): string {
     return this.jwtService.sign({
-      id: payload['_id'],
-      email: payload.email,
-      role: payload.role,
+      id: userId,
+      email: user.email,
+      role: user.role,
     });
   }
 }

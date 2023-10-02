@@ -25,3 +25,9 @@ export interface Pagination {
   prevPage?: number;
   nextPage?: number;
 }
+
+export interface JwtPayload {
+  _id: string;
+  email: string;
+  role: string;
+}
