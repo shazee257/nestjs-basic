@@ -6,12 +6,12 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { GetCurrentUser } from 'src/common/decorators/get-current-user.decorator';
+import { UserWithAccessToken } from 'src/common/interfaces';
 import { User } from 'src/schemas/user/user.schema';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { RegisterUserDTO } from './dto/register.dto';
-import { GetCurrentUserId } from 'src/common/decorators/get-current-user-id.decorator';
+import { GetCurrentUser } from 'src/common/decorators/indext';
 
 @Controller('auth')
 export class AuthController {
@@ -23,20 +23,17 @@ export class AuthController {
   @HttpCode(200)
   @Post('/login')
   @UseGuards(AuthGuard('local'))
-  login(@GetCurrentUserId() userId: string, @GetCurrentUser() user: User)
-    : { user: User; accessToken: string } {
-    const accessToken = this.authService.generateToken(user, userId);
+  login(@GetCurrentUser() user: User)
+    : UserWithAccessToken {
+    const accessToken = this.authService.generateToken(user);
 
     return { user, accessToken };
   }
 
   @Post('/register')
-  async register(@Body() registerUserDto: RegisterUserDTO): Promise<{
-    user: User;
-    accessToken: string;
-  }> {
+  async register(@Body() registerUserDto: RegisterUserDTO): Promise<UserWithAccessToken> {
     const user: User = await this.usersService.create(registerUserDto);
-    const accessToken = this.authService.generateToken(user, user['_id']);
+    const accessToken = this.authService.generateToken(user);
 
     return {
       user,

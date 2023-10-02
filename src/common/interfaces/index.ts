@@ -1,3 +1,5 @@
+import { User } from "src/schemas/user/user.schema";
+
 export interface QueryOption {
   page: number;
   limit: number;
@@ -30,4 +32,9 @@ export interface JwtPayload {
   _id: string;
   email: string;
   role: string;
+}
+
+export class UserWithAccessToken {
+  user: User;
+  accessToken: string;
 }

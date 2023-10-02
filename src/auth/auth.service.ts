@@ -6,9 +6,9 @@ import { User } from 'src/schemas/user/user.schema';
 export class AuthService {
   constructor(private readonly jwtService: JwtService) { }
 
-  generateToken(user: User, userId: string): string {
+  generateToken(user: User): string {
     return this.jwtService.sign({
-      id: userId,
+      id: user['_id'],
       email: user.email,
       role: user.role,
     });
