@@ -56,14 +56,7 @@ export class UsersService {
         limit,
       });
 
-    // const { result, pagination }: PaginationResult<User> = await getPaginatedResult({
-    //   model: this.userModel,
-    //   query: {},
-    //   page,
-    //   limit,
-    // })
-
-    return { result, pagination };
+    return { users: result, pagination };
   }
 
   async findOne(userId: string) {

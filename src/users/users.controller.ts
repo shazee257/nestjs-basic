@@ -33,7 +33,6 @@ export class UsersController {
     } catch (error) {
       throwError(error);
     }
-
   }
 
   @Get()
@@ -41,8 +40,6 @@ export class UsersController {
   async findOne(@Res() res: Response, @GetCurrentUserId() userId: string) {
     const user = await this.usersService.findOne(userId);
     generateResponse(user, 'Fetched profile successfully', res);
-
-
   }
 
   @Put('/update-profile')

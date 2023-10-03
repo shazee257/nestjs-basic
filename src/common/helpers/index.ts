@@ -130,15 +130,8 @@ export const generateResponse = <T>(
   return res.status(statusCode).json(response);
 };
 
-
-// return res.status(HttpStatus.BAD_REQUEST).json({
-//   statusCode: error.status,
-//   message: [error.message],
-//   error: error.name,
-// });
-
-
 export const throwError = (error: any) => {
+  console.log('error >>>>>> ', error);
   throw new HttpException({
     statusCode: error.status,
     message: [error.message],
