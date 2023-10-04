@@ -127,7 +127,7 @@ export const generateResponse = <T>(
     statusCode,
   };
 
-  return res.status(statusCode).json(response);
+  res.status(statusCode).json(response);
 };
 
 export const throwError = (error: any) => {

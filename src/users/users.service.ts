@@ -11,6 +11,7 @@ import { loginDTO } from 'src/auth/dto/login.dto';
 import { RegisterUserDTO } from 'src/auth/dto/register.dto';
 import {
   comparePassword,
+  generateResponse,
   getAggregatedPaginatedResult,
   hashPassword
 } from 'src/common/helpers';
@@ -113,5 +114,26 @@ export class UsersService {
 
   async uploadImage(userId: string, fileName: string) {
     return await this.userModel.findByIdAndUpdate(userId, { $set: { image: `users/${fileName}` } }, { new: true });
+  }
+
+  async googleLogin(user: any) {
+    const userObj = await this.userModel.findOne({ email: user.email });
+
+    if (!userObj) {
+      // add user to db if not exists
+      const newUser = await this.userModel.create({
+        googleId: user?.googleId,
+        email: user?.email,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        image: user?.image,
+        role: 'user',
+        deviceToken: 'device-token'
+      });
+
+      return newUser;
+    } else {
+      return userObj;
+    }
   }
 }

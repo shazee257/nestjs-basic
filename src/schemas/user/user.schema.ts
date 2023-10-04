@@ -7,6 +7,9 @@ const aggregateMongoosePaginate = require('mongoose-aggregate-paginate-v2');
 @Schema({ timestamps: true, versionKey: false })
 export class User {
   @Prop()
+  googleId: string;
+
+  @Prop()
   firstName: string;
 
   @Prop()
@@ -18,7 +21,7 @@ export class User {
   @Prop({ required: true })
   email: string;
 
-  @Prop({ required: true, select: false })
+  @Prop({ select: false })
   password: string;
 
   @Prop()
