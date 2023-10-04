@@ -1,17 +1,17 @@
 import {
-  BadRequestException,
-  Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseIntPipe, Put, Query, Req, Res, UnprocessableEntityException, UploadedFile, UseGuards, UseInterceptors,
+  Body, Controller, Delete, Get, HttpException, HttpStatus,
+  ParseIntPipe, Post, Put, Query, Req, Res,
+  UploadedFiles, UseGuards, UseInterceptors
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
+import { diskStorage } from 'multer';
+import { GetCurrentUserId } from 'src/common/decorators';
+import { filterImage, generateFilename, generateResponse, throwError } from 'src/common/helpers';
+import { QueryOption } from 'src/common/interfaces';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { UsersService } from './users.service';
-import { PaginationResult, QueryOption } from 'src/common/interfaces';
-import { User } from 'src/schemas/user/user.schema';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { filterImage, generateFilename, generateResponse, throwError } from 'src/common/helpers';
-import { GetCurrentUserId } from 'src/common/decorators';
 
 @Controller('users')
 export class UsersController {
@@ -54,7 +54,7 @@ export class UsersController {
     return this.usersService.remove(userId);
   }
 
-  @Put('/upload-image')
+  @Post('/upload-image')
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(
     FileInterceptor('image', {
@@ -65,8 +65,8 @@ export class UsersController {
       fileFilter: filterImage,
     }),
   )
-  uploadImage(@GetCurrentUserId() userId: string, @Req() req: Request, @UploadedFile() file) {
-    console.log('req.fileValidationError >>>>>>>>>>>>>> ', req['fileValidationError']);
+  uploadImage(@GetCurrentUserId() userId: string, @Req() req: Request, @UploadedFiles() files: any) {
+    console.log('files >>', files);
 
     // error handling
     if (req['fileValidationError']) {
@@ -76,6 +76,6 @@ export class UsersController {
       );
     }
 
-    return this.usersService.uploadImage(userId, file.filename);
+    // return this.usersService.uploadImage(userId, file.filename);
   }
 }
