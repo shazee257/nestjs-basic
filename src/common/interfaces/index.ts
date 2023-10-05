@@ -1,5 +1,3 @@
-import { User } from "src/schemas/user/user.schema";
-
 export interface QueryOption {
   page: number;
   limit: number;
@@ -37,4 +35,12 @@ export interface ApiResponse<T> {
   data: T;
   message: string;
   statusCode: number;
+}
+
+export interface logging {
+  statusCode: number;
+  message: string;
+  error: string;
+  stack: string;
+  createdAt: Date;
 }

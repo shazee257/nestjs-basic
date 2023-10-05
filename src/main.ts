@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationExceptionFilter } from './validation-exception.filter';
+import { ValidationExceptionFilter } from './common/exception-filters/validation-exception.filter';
 import { UnprocessableEntityException, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 

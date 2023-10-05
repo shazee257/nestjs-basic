@@ -11,10 +11,10 @@ import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { GetCurrentUser } from 'src/common/decorators';
 import { generateResponse } from 'src/common/helpers';
-import { User } from 'src/schemas/user/user.schema';
-import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { RegisterUserDTO } from './dto/register.dto';
+import { UsersService } from '../users/users.service';
+import { User } from '../schemas/user.schema';
 
 @Controller('auth')
 export class AuthController {

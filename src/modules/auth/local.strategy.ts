@@ -2,7 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { Strategy } from 'passport-local';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
+import { throwError } from 'src/common/helpers';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -23,7 +24,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       });
       return user;
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.UNPROCESSABLE_ENTITY);
+      throwError(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
   }
 }

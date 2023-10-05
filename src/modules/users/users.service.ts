@@ -7,15 +7,15 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { loginDTO } from 'src/auth/dto/login.dto';
-import { RegisterUserDTO } from 'src/auth/dto/register.dto';
+import { loginDTO } from '../auth/dto/login.dto';
+import { RegisterUserDTO } from '../auth/dto/register.dto';
 import {
   comparePassword,
   getAggregatedPaginatedResult,
   hashPassword
 } from 'src/common/helpers';
 import { PaginationResult, QueryOption } from 'src/common/interfaces';
-import { USER_MODEL, User, UserDocument } from 'src/schemas/user/user.schema';
+import { USER_MODEL, User, UserDocument } from '../schemas/user.schema';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { fetchAllUsers } from './query/user.query';
 

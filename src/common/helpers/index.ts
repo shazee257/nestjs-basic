@@ -130,10 +130,11 @@ export const generateResponse = <T>(
   res.status(statusCode).json(response);
 };
 
-export const throwError = (error: any, statusCode: number) => {
+export const throwError = (error: Error, statusCode: number) => {
   throw new HttpException({
     statusCode,
     message: error.message?.replace(/\"/g, ''),
     error: error.name,
+    stack: error?.stack,
   }, statusCode);
 };
