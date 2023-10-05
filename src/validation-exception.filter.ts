@@ -13,7 +13,7 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     const exceptionResponse = exception.getResponse() as any;
 
     const formattedResponse = {
-      message: Object.values(exceptionResponse.message[0].constraints),
+      message: Object.values(exceptionResponse.message[0].constraints)[0],
       error: 'Unprocessable Entity',
       statusCode: 422,
     };

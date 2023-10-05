@@ -11,7 +11,6 @@ import { loginDTO } from 'src/auth/dto/login.dto';
 import { RegisterUserDTO } from 'src/auth/dto/register.dto';
 import {
   comparePassword,
-  generateResponse,
   getAggregatedPaginatedResult,
   hashPassword
 } from 'src/common/helpers';
@@ -70,13 +69,8 @@ export class UsersService {
     return user;
   }
 
-  async update(userId: string, updateUserDto: UpdateUserDTO) {
+  async updateUserById(userId: string, updateUserDto: UpdateUserDTO) {
     const updatedUser = await this.userModel.findByIdAndUpdate(userId, { $set: updateUserDto }, { new: true });
-
-    if (!updatedUser) {
-      throw new NotFoundException('User not found');
-    }
-
     return updatedUser;
   }
 
@@ -127,6 +121,27 @@ export class UsersService {
         firstName: user?.firstName,
         lastName: user?.lastName,
         image: user?.image,
+        role: 'user',
+        deviceToken: 'device-token'
+      });
+
+      return newUser;
+    } else {
+      return userObj;
+    }
+  }
+
+  async facebookLogin(user: any) {
+    const userObj = await this.userModel.findOne({ facebookId: user.facebookId });
+
+    if (!userObj) {
+      // add user to db if not exists
+      const newUser = await this.userModel.create({
+        facebookId: user?.facebookId,
+        email: user?.email,
+        fullName: user?.fullName,
+        provider: user?.provider,
+        // image: user?.image,
         role: 'user',
         deviceToken: 'device-token'
       });

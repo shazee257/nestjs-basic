@@ -20,6 +20,11 @@ export class UpdateUserDTO {
   @IsNotEmpty({ message: 'Last name is required.' })
   lastName: string;
 
+  @IsString({ message: 'Full name is not valid.' })
+  @Length(3, 30, { message: 'Full name must be between 3 and 30 characters long.' })
+  @IsNotEmpty({ message: 'Full name is required.' })
+  fullName: string
+
   @IsString({ message: 'dob is not valid.' })
   @Matches(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/, { message: 'dob is not valid.' })
   @IsNotEmpty({ message: 'dob is required.' })

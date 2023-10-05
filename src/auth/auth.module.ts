@@ -8,6 +8,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 import { UsersService } from 'src/users/users.service';
 import { GoogleStrategy } from './google.strategy';
+import { FacebookStrategy } from './facebook.strategy';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { GoogleStrategy } from './google.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, LocalStrategy, GoogleStrategy, UsersService],
+  providers: [AuthService, JwtStrategy, LocalStrategy, GoogleStrategy, FacebookStrategy, UsersService],
   exports: [],
 })
 export class AuthModule { }

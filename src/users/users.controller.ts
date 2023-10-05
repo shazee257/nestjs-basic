@@ -31,7 +31,7 @@ export class UsersController {
       const users = await this.usersService.findAll(options);
       generateResponse(users, 'Fetched profile successfully', res);
     } catch (error) {
-      throwError(error);
+      throwError(error, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -44,8 +44,13 @@ export class UsersController {
 
   @Put('/update-profile')
   @UseGuards(AuthGuard('jwt'))
-  update(@GetCurrentUserId() userId: string, @Body() updateUserDto: UpdateUserDTO) {
-    return this.usersService.update(userId, updateUserDto);
+  async update(@GetCurrentUserId() userId: string, @Body() updateUserDto: UpdateUserDTO, @Res() res: Response) {
+    try {
+      const user = await this.usersService.updateUserById('userId', updateUserDto);
+      generateResponse(user, 'Updated profile successfully', res);
+    } catch (error) {
+      throwError(error, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Delete('/remove-account')

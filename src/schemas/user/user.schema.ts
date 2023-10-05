@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { ROLES } from 'src/common/constants';
+import { AUTH_PROVIDER, ROLES } from 'src/common/constants';
 
 const aggregateMongoosePaginate = require('mongoose-aggregate-paginate-v2');
 
@@ -10,15 +10,24 @@ export class User {
   googleId: string;
 
   @Prop()
+  facebookId: string;
+
+  @Prop({ type: String, enum: Object.values(AUTH_PROVIDER), default: AUTH_PROVIDER.LOCAL })
+  provider: AUTH_PROVIDER;
+
+  @Prop()
   firstName: string;
 
   @Prop()
   lastName: string;
 
   @Prop()
+  fullName: string;
+
+  @Prop()
   dob: Date;
 
-  @Prop({ required: true })
+  @Prop()
   email: string;
 
   @Prop({ select: false })

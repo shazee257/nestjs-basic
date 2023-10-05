@@ -38,6 +38,7 @@ export class AuthController {
   }
 
   @Get('/google')
+  // @UseGuards(AuthGuard('facebook'))
   @UseGuards(AuthGuard('google'))
   googleLogin(@Req() req) { }
 
@@ -49,6 +50,28 @@ export class AuthController {
     }
 
     const userObj: User = await this.usersService.googleLogin(user);
+    userObj['id'] = userObj['_id'];
+
+    const accessToken = this.authService.generateToken(userObj);
+    generateResponse({ user: userObj, accessToken }, 'Logged in successfully', res);
+    return {
+      user: userObj,
+      accessToken
+    }
+  }
+
+  @Get('/facebook')
+  @UseGuards(AuthGuard('facebook'))
+  facebookLogin(@Req() req) { }
+
+  @Get('/facebook/callback')
+  @UseGuards(AuthGuard('facebook'))
+  async facebookAuthRedirect(@Res() res: Response, @GetCurrentUser() user: any) {
+    if (!user) {
+      generateResponse(null, 'Facebook user not found', res);
+    }
+
+    const userObj: User = await this.usersService.facebookLogin(user);
     userObj['id'] = userObj['_id'];
 
     const accessToken = this.authService.generateToken(userObj);
